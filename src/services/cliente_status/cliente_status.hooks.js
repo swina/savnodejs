@@ -4,7 +4,7 @@ const clienteStatus = require('../../hooks/cliente_status');
 
 module.exports = {
   before: {
-    all: [  ],//authenticate('jwt')
+    all: [authenticate('jwt') ],//authenticate('jwt')
     find: [clienteStatus()],
     get: [],
     create: [],

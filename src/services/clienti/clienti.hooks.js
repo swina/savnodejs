@@ -5,7 +5,7 @@ const clientiErrors = require( '../../hooks/clienti.error.js' );
 const clienteCreato = require('../../hooks/clienti.creato');
 module.exports = {
   before: {
-    all: [ ], //authenticate('jwt') 
+    all: [authenticate('jwt')], //authenticate('jwt') 
     find: [],
     get: [],
     create: [],
