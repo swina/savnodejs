@@ -12,6 +12,7 @@ module.exports = (options = {}) => {
     const id_processo = context.params.query.id_processo || null;
     const dt_from = context.params.query.dt_from || null;
     const dt_to = context.params.query.dt_to || null;
+    const custom = context.params.query.params || null
     let operator = 'AND '
     let filter = ''
     if ( id_persona ){
@@ -30,10 +31,22 @@ module.exports = (options = {}) => {
       filter += `${operator} DATE_FORMAT(dt_status,'%Y%m%d') <= "${dt_to}"`;
       operator = ' AND '
     }
+    if ( custom && custom === 'alert' ){
+      let from = new Date();
+      let to = new Date();
+      let dateFrom = new Date(from.setDate(from.getDate() - 3));
+      let dateTo = new Date(to.setDate(to.getDate() + 1));
+      dateTo = dateTo.toISOString().split('T')[0]
+      dateFrom = dateFrom.toISOString().split('T')[0]
+      filter = `AND ( DATE_FORMAT(dt_status,'%Y%m%d') <= "${dateTo}" AND  DATE_FORMAT(dt_status,'%Y%m%d') >= "${dateFrom}") AND ( tbl_processi.int_postalert > 0 )`
+    }
     const db = context.app.get('knexClient');
       const sql = db.raw ( `
           SELECT  
+            tbl_status.id_status,
             DATE_FORMAT ( tbl_status.dt_status , '%d/%m/%Y') AS data_status,
+            DATE_FORMAT ( tbl_status.dt_status , '%H-%i') AS ora_status,
+            tbl_status.dt_status,
             tbl_clienti.id_cliente,
             tbl_clienti.ac_cognome,
             tbl_clienti.ac_nome,
@@ -44,7 +57,8 @@ module.exports = (options = {}) => {
             tbl_persone.ac_cognome AS agente,
             tbl_processi.ac_processo,
             tbl_processi.ac_sigla AS sigla,
-            tbl_processi.ac_colore AS colore,
+            tbl_processi.ac_colore,
+            tbl_processi.int_postalert,
             tbl_gruppi_clienti.ac_icona
           FROM tbl_status 
           INNER JOIN tbl_clienti ON tbl_status.id_cliente = tbl_clienti.id_cliente
@@ -60,6 +74,7 @@ module.exports = (options = {}) => {
           ${filter}
           ORDER BY dt_status DESC LIMIT ${skip},${limit}`);
         const res = await sql;
+        console.log ( res )
         context.result = res;
         return context;
   };
