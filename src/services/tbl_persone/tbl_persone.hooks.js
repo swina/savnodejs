@@ -1,9 +1,9 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
-
+const  agenti  = require('../../hooks/agente.js');
 module.exports = {
   before: {
     all: [authenticate('jwt')],//authenticate('jwt') 
-    find: [],
+    find: [agenti()],
     get: [],
     create: [],
     update: [],

@@ -7,7 +7,7 @@ module.exports = (options = {}) => {
     console.log ( 'Request from => ' , context.params.query );
     const id_cliente = context.params.query.id_cliente || null;
     const skip = context.params.query.skip || 0;
-    const limit = context.params.query.limit || 50;
+    const limit = context.params.query.limit || context.app.get('pagination').limit;
     const filtro = '';
     const operatore = 'WHERE';
     if ( id_cliente ) {

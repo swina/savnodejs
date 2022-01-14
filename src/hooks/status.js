@@ -74,7 +74,6 @@ module.exports = (options = {}) => {
           ${filter}
           ORDER BY dt_status DESC LIMIT ${skip},${limit}`);
         const res = await sql;
-        console.log ( res )
         context.result = res;
         return context;
   };
