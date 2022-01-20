@@ -41,6 +41,7 @@
         "@feathersjs/rest-client": "^4.5.12",
         "@feathersjs/socketio": "^5.0.0-pre.15",
         "@feathersjs/transport-commons": "^5.0.0-pre.15",
+        "axios": "^0.24.0",
         "compression": "latest",
         "cors": "^2.8.5",
         "dauria": "^2.0.0",

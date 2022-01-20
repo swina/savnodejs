@@ -14,6 +14,7 @@ module.exports = (options = {}) => {
     const dt_to = context.params.query.dt_to || null;
     const custom = context.params.query.params || null
     let operator = 'AND '
+    let order = 'DESC'
     let filter = ''
     if ( id_persona ){
       filter = `${operator} tbl_persone.id_persona = ${id_persona}`;
@@ -31,21 +32,23 @@ module.exports = (options = {}) => {
       filter += `${operator} DATE_FORMAT(dt_status,'%Y%m%d') <= "${dt_to}"`;
       operator = ' AND '
     }
-    if ( custom && custom === 'alert' ){
+    if ( context.params.query.params && context.params.query.params === 'alert' ){
       let from = new Date();
       let to = new Date();
       let dateFrom = new Date(from.setDate(from.getDate() - 3));
-      let dateTo = new Date(to.setDate(to.getDate() + 1));
+      let dateTo = new Date(to.setDate(to.getDate() - 1));
       dateTo = dateTo.toISOString().split('T')[0]
       dateFrom = dateFrom.toISOString().split('T')[0]
-      filter = `AND ( DATE_FORMAT(dt_status,'%Y%m%d') <= "${dateTo}" AND  DATE_FORMAT(dt_status,'%Y%m%d') >= "${dateFrom}") AND ( tbl_processi.int_postalert > 0 )`
+      filter = `AND ( DATE_FORMAT(dt_status,'%Y-%m-%d') <= "${dateTo}" AND  DATE_FORMAT(dt_status,'%Y-%m-%d') >= "${dateFrom}") AND ( tbl_processi.int_postalert > 0 )`
+      order = 'ASC'
     }
+    console.log ( 'Filtro => ' , filter );
     const db = context.app.get('knexClient');
       const sql = db.raw ( `
           SELECT  
             tbl_status.id_status,
             DATE_FORMAT ( tbl_status.dt_status , '%d/%m/%Y') AS data_status,
-            DATE_FORMAT ( tbl_status.dt_status , '%H-%i') AS ora_status,
+            DATE_FORMAT ( tbl_status.dt_status , '%H:%i') AS ora_status,
             tbl_status.dt_status,
             tbl_clienti.id_cliente,
             tbl_clienti.ac_cognome,
@@ -72,7 +75,7 @@ module.exports = (options = {}) => {
             GROUP BY tbl_status.id_cliente
           )
           ${filter}
-          ORDER BY dt_status DESC LIMIT ${skip},${limit}`);
+          ORDER BY dt_status ${order} LIMIT ${skip},${limit}`);
         const res = await sql;
         context.result = res;
         return context;
