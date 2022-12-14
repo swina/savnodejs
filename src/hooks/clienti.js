@@ -4,15 +4,20 @@
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
-    console.log ( 'Request from => ' , context.params.query );
     const id_cliente = context.params.query.id_cliente || null;
+    const dt_from = context.params.query.dt_from || null
+    const dt_to = context.params.query.dt_to || null
     const skip = context.params.query.skip || 0;
-    console.log ( context.app.get('paginate') )
     const limit = context.params.query.limit || context.app.get('paginate').default;
-    const filtro = '';
-    const operatore = 'WHERE';
+    let filtro = '';
+    let operatore = 'WHERE';
     if ( id_cliente ) {
-      filtro = `${operatore} tbl_clienti = ${id_cliente}`
+      filtro = `${operatore} tbl_clienti.id_cliente = ${id_cliente}`
+      operatore = ' AND '
+    }
+    if ( dt_from && dt_to ){
+      filtro += `${operatore} ( DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%Y%m%d') >= "${dt_from}" AND DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%Y%m%d') <=  "${dt_to}" )`;
+      operatore = ' AND '
     }
     const db = context.app.get('knexClient');
     const totalSQL = db.raw("Select COUNT(id_cliente) as total from tbl_clienti WHERE bl_cancellato=0");
@@ -34,6 +39,8 @@ module.exports = (options = {}) => {
     LIMIT ${skip},${limit}`);
     const res = await sql;
     const total = await totalSQL;
+    console.log ( 'filtro clienti -------------: ' , filtro , context.params.query )
+    console.log ( sql )
     context.result = { total: total[0][0].total , skip: skip , limit: limit , data : res[0]  };
     return context;
     // } else {

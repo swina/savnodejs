@@ -4,7 +4,6 @@
 // eslint-disable-next-line no-unused-vars
 module.exports = (options = {}) => {
   return async context => {
-    console.log ( context.params.query )
     const skip = context.params.query.skip || 0;
     const limit = context.params.query.limit || 20;
     const id_cliente = context.params.query.id_cliente || null; 
@@ -42,7 +41,7 @@ module.exports = (options = {}) => {
       filter = `AND ( DATE_FORMAT(dt_status,'%Y-%m-%d') <= "${dateTo}" AND  DATE_FORMAT(dt_status,'%Y-%m-%d') >= "${dateFrom}") AND ( tbl_processi.int_postalert > 0 )`
       order = 'ASC'
     }
-    console.log ( 'Filtro => ' , filter );
+    //console.log ( 'Filtro Status => ' , filter );
     const db = context.app.get('knexClient');
       const sql = db.raw ( `
           SELECT  
