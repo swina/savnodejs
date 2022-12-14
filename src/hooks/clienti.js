@@ -7,13 +7,15 @@ module.exports = (options = {}) => {
     console.log ( 'Request from => ' , context.params.query );
     const id_cliente = context.params.query.id_cliente || null;
     const skip = context.params.query.skip || 0;
-    const limit = context.params.query.limit || context.app.get('pagination').limit;
+    console.log ( context.app.get('paginate') )
+    const limit = context.params.query.limit || context.app.get('paginate').default;
     const filtro = '';
     const operatore = 'WHERE';
     if ( id_cliente ) {
       filtro = `${operatore} tbl_clienti = ${id_cliente}`
     }
     const db = context.app.get('knexClient');
+    const totalSQL = db.raw("Select COUNT(id_cliente) as total from tbl_clienti WHERE bl_cancellato=0");
     const sql = db.raw(`Select
     tbl_persone.id_gruppo,
     tbl_persone.ac_cognome AS agente,
@@ -31,7 +33,8 @@ module.exports = (options = {}) => {
     ORDER BY tbl_clienti.dt_data_registrazione DESC
     LIMIT ${skip},${limit}`);
     const res = await sql;
-    context.result = res;
+    const total = await totalSQL;
+    context.result = { total: total[0][0].total , skip: skip , limit: limit , data : res[0]  };
     return context;
     // } else {
     //   return context;

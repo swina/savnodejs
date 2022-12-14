@@ -50,7 +50,7 @@ module.exports = (options = {}) => {
         ORDER BY dt_status DESC
         LIMIT ${skip},${limit}`);
         const res = await sql;
-        context.result = res;
+        context.result = res[0];
         return context;
     }
   };

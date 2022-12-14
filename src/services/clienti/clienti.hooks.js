@@ -6,7 +6,7 @@ const clienteCreato = require('../../hooks/clienti.creato');
 module.exports = {
   before: {
     all: [authenticate('jwt')], //authenticate('jwt') 
-    find: [],
+    find: [clienti()],
     get: [],
     create: [],
     update: [],
