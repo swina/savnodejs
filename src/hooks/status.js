@@ -41,6 +41,13 @@ module.exports = (options = {}) => {
       filter = `AND ( DATE_FORMAT(dt_status,'%Y-%m-%d') <= "${dateTo}" AND  DATE_FORMAT(dt_status,'%Y-%m-%d') >= "${dateFrom}") AND ( tbl_processi.int_postalert > 0 )`
       order = 'ASC'
     }
+    if ( !filter ){
+      let to = new Date();
+      let dateTo = new Date(to.setDate(to.getDate() - 1));
+      dateTo = dateTo.toISOString().split('T')[0]
+      filter = ` AND DATE_FORMAT(dt_status,'%Y-%m-%d') <= "${dateTo}"`
+      order = 'DESC'
+    }
     //console.log ( 'Filtro Status => ' , filter );
     const db = context.app.get('knexClient');
       const sql = db.raw ( `
