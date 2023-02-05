@@ -25,16 +25,21 @@ module.exports = (options = {}) => {
       operatore = ' AND '
     }
     if ( context.params.query?.search ){
-      if ( context.params.query.search.field != 'dt_data_registrazione' ){
-        
-        filtro += `${operatore} ${context.params.query.search.table}.${context.params.query.search.field} LIKE "%${context.params.query.search.value}%"`
+      if ( context.params.query.search.field === 'id_agente' ){
+        filtro += `${operatore} ${context.params.query.search.table}.${context.params.query.search.field} = ${context.params.query.search.value}`
       } else {
-        if ( !context.params.query.search.value.includes('/') ){
-          filtro += `${operatore} ( DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') = "${context.params.query.search.value}")`
+
+        if ( context.params.query.search.field != 'dt_data_registrazione' ){
+          
+          filtro += `${operatore} ${context.params.query.search.table}.${context.params.query.search.field} LIKE "%${context.params.query.search.value}%"`
         } else {
-          dt_from = context.params.query.search.value.split('/')[0]
-          dt_to = context.params.query.search.value.split('/')[1]
-          filtro += `${operatore} ( DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') >= "${dt_from}" AND DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') <=  "${dt_to}" )`;
+          if ( !context.params.query.search.value.includes('/') ){
+            filtro += `${operatore} ( DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') = "${context.params.query.search.value}")`
+          } else {
+            dt_from = context.params.query.search.value.split('/')[0]
+            dt_to = context.params.query.search.value.split('/')[1]
+            filtro += `${operatore} ( DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') >= "${dt_from}" AND DATE_FORMAT(tbl_clienti.dt_data_registrazione,'%d-%m-%Y') <=  "${dt_to}" )`;
+          }
         }
       }
       operatore = ' AND '

@@ -31,6 +31,7 @@ module.exports = (options = {}) => {
         tbl_clienti.ac_telefono,
         tbl_clienti.ac_segnalatore,
         tbl_clienti.ac_email,
+        tbl_clienti.id_agente,
         tbl_gruppi_clienti.id_gruppo AS id_qualifica,
         tbl_gruppi_clienti.ac_icona,
         tbl_gruppi_clienti.ac_gruppo AS qualifica,
@@ -49,9 +50,9 @@ module.exports = (options = {}) => {
         WHERE tbl_status.id_cliente = ${id_cliente}
         ORDER BY dt_status DESC
         LIMIT ${skip},${limit}`);
-        const res = await sql;
-        context.result = res[0];
-        return context;
+      const res = await sql;
+      context.result = res[0];
+      return context;
     }
   };
 };

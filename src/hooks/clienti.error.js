@@ -5,6 +5,7 @@
 module.exports = (options = {}) => {
     return async context => {
         if ( context.error ){
+            console.log ( context.error )
             context.error.code = 400;
             context.error.message = "Bad request or Not authorized!" ;
         }

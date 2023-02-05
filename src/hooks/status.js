@@ -5,7 +5,7 @@
 module.exports = (options = {}) => {
   return async context => {
     const skip = context.params.query.skip || 0;
-    const limit = context.params.query.limit || 20;
+    const limit = context.params.query.$limit || 20;
     const id_cliente = context.params.query.id_cliente || null; 
     const id_persona = context.params.query.id_persona || null;
     const id_processo = context.params.query.id_processo || null;
@@ -83,6 +83,7 @@ module.exports = (options = {}) => {
           ${filter}
           ORDER BY dt_status ${order} LIMIT ${skip},${limit}`);
         const res = await sql;
+        console.log ( context.params.query )
         context.result = res;
         return context;
   };

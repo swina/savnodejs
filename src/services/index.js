@@ -6,6 +6,7 @@ const clienteStatus = require('./cliente_status/cliente_status.service.js');
 const processi = require('./processi/processi.service.js');
 const gruppi = require('./gruppi/gruppi.service.js');
 const contact = require ( './contact/contact.service.js' );
+const agenda = require('./agenda/agenda.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function (app) {
   app.configure(users);
@@ -16,4 +17,5 @@ module.exports = function (app) {
   app.configure(processi);
   app.configure(gruppi);
   app.configure(contact);
+  app.configure(agenda);
 };
